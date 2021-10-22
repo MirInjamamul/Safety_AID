@@ -1,4 +1,4 @@
-package com.example.bottomnavigationtest;
+package com.example.safetyaid;
 
 import org.junit.Test;
 

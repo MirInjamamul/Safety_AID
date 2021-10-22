@@ -1,4 +1,4 @@
-package com.example.bottomnavigationtest.ui.dashboard;
+package com.example.safetyaid.ui.dashboard;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,8 +12,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.bottomnavigationtest.R;
-import com.example.bottomnavigationtest.databinding.FragmentDashboardBinding;
+import com.example.safetyaid.R;
+import com.example.safetyaid.databinding.FragmentDashboardBinding;
 
 public class DashboardFragment extends Fragment {
 

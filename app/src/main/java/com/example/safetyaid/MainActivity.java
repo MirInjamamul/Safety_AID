@@ -1,4 +1,4 @@
-package com.example.bottomnavigationtest;
+package com.example.safetyaid;
 
 import android.os.Bundle;
 
@@ -10,7 +10,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.bottomnavigationtest.databinding.ActivityMainBinding;
+import com.example.safetyaid.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 
