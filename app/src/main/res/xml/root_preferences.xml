@@ -1,0 +1,80 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+<!--    <PreferenceCategory app:title="@string/messages_header">-->
+
+<!--        <EditTextPreference-->
+<!--            app:key="signature"-->
+<!--            app:title="@string/signature_title"-->
+<!--            app:useSimpleSummaryProvider="true" />-->
+
+<!--        <ListPreference-->
+<!--            app:defaultValue="reply"-->
+<!--            app:entries="@array/reply_entries"-->
+<!--            app:entryValues="@array/reply_values"-->
+<!--            app:key="reply"-->
+<!--            app:title="@string/reply_title"-->
+<!--            app:useSimpleSummaryProvider="true" />-->
+
+<!--    </PreferenceCategory>-->
+
+    <PreferenceCategory app:title="@string/security_header">
+
+        <SwitchPreferenceCompat
+
+            app:key="panic"
+            app:title="@string/panic_button"
+            app:summaryOn="@string/panic_button_on"
+            app:summaryOff="@string/panic_button_off"
+            />
+
+        <SwitchPreferenceCompat
+
+            app:key="fake_shutdown"
+            app:title="@string/fake_shutdown_button"
+            app:summaryOn="@string/fake_shutdown_button_on"
+            app:summaryOff="@string/fake_shutdown_button_off"
+            />
+
+        <SwitchPreferenceCompat
+
+            app:key="fake_airplane_mood"
+            app:title="@string/fake_airplane_mood_button"
+            app:summaryOn="@string/fake_airplane_mood_button_on"
+            app:summaryOff="@string/fake_airplane_mood_button_off"
+            />
+
+        <SwitchPreferenceCompat
+
+            app:key="lock_apps"
+            app:title="@string/lock_apps_button"
+            app:summaryOn="@string/lock_apps_button_on"
+            app:summaryOff="@string/lock_apps_button_off"
+            />
+
+        <SwitchPreferenceCompat
+
+            app:key="low_battery_sms"
+            app:title="@string/low_battery_sms_button"
+            app:summaryOn="@string/low_battery_sms_button_on"
+            app:summaryOff="@string/low_battery_sms_button_off"
+            />
+
+        <SwitchPreferenceCompat
+
+            app:key="protective_selfie"
+            app:title="@string/protective_selfie_button"
+            app:summaryOn="@string/protective_selfie_button_on"
+            app:summaryOff="@string/protective_selfie_button_off"
+            />
+
+        <SwitchPreferenceCompat
+
+            app:key="car_collision_detector"
+            app:title="@string/car_collision_detector_button"
+            app:summaryOn="@string/car_collision_detector_button_on"
+            app:summaryOff="@string/car_collision_detector_button_off"
+            />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

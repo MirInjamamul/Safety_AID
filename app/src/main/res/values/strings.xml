@@ -1,6 +1,42 @@
 <resources>
     <string name="app_name">SafetyAid</string>
+    <!-- Bottom NAV Title -->
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <!-- Settings Activity Title -->
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <!-- Preference Titles -->
+    <string name="security_header">Feature</string>
+
+    <!-- feature Preferences -->
+    <string name="panic_button">Panic Button</string>
+    <string name="panic_button_on">Emergency Button Activated</string>
+    <string name="panic_button_off">Emergency Button Deactivated</string>
+
+    <string name="fake_shutdown_button">Fake Shutdown Mood</string>
+    <string name="fake_shutdown_button_on">Fake Shutdown Mood Activated</string>
+    <string name="fake_shutdown_button_off">Prevent your phone from going shutdown</string>
+
+    <string name="fake_airplane_mood_button">Fake Airplane Mood</string>
+    <string name="fake_airplane_mood_button_on">Fake Airplane Mood Activated</string>
+    <string name="fake_airplane_mood_button_off">Stop unwanted persons from enabling Airplane Mood</string>
+
+    <string name="lock_apps_button">Lock Apps</string>
+    <string name="lock_apps_button_on">Lock Apps mode Activated</string>
+    <string name="lock_apps_button_off">Protect App with a PIN code</string>
+
+    <string name="low_battery_sms_button">Low Battery SMS</string>
+    <string name="low_battery_sms_button_on">Fake Shutdown Activated</string>
+    <string name="low_battery_sms_button_off">Send Message when you are running out of battery</string>
+
+    <string name="protective_selfie_button">Protective Selfie</string>
+    <string name="protective_selfie_button_on">Protective Selfie Activated</string>
+    <string name="protective_selfie_button_off">Take Selfie if someone tries to unlock your phone 5 times</string>
+
+    <string name="car_collision_detector_button">Car collision Detector</string>
+    <string name="car_collision_detector_button_on">Car collision detector activated</string>
+    <string name="car_collision_detector_button_off">Send location to nearest emergency service</string>
+
 </resources>

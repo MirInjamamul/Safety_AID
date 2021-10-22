@@ -1,6 +1,8 @@
 package com.example.safetyaid.ui.home;
 
 import android.os.Bundle;
+import android.preference.PreferenceFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,38 +11,35 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.SwitchPreferenceCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.safetyaid.R;
 import com.example.safetyaid.databinding.FragmentHomeBinding;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends PreferenceFragmentCompat {
 
-    private HomeViewModel homeViewModel;
-    private FragmentHomeBinding binding;
-
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
-
-        binding = FragmentHomeBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-
-        final TextView textView = binding.textHome;
-        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
-        return root;
-    }
+    private static final String TAG = "SettingsFragment";
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        setPreferencesFromResource(R.xml.root_preferences, rootKey);
+
+        SwitchPreferenceCompat alarmSwitch = findPreference("sync");
+
+        if (alarmSwitch != null) {
+            alarmSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference arg0, Object isVibrateOnObject) {
+                    boolean isVibrateOn = (Boolean) isVibrateOnObject;
+                    Log.d(TAG, "onPreferenceChange: "+isVibrateOn);
+                    return true;
+                }
+            });
+        }
     }
 }
