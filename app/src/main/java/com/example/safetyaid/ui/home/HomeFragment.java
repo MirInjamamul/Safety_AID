@@ -32,7 +32,8 @@ public class HomeFragment extends PreferenceFragmentCompat {
                         Toast.makeText(getActivity(), "Panic Service is been Activated", Toast.LENGTH_LONG).show();
                         startService();
                     }else{
-
+                        Toast.makeText(getActivity(), "Panic Service is been DeActivated", Toast.LENGTH_LONG).show();
+                        stopService();
                     }
                     return true;
                 }
@@ -46,4 +47,10 @@ public class HomeFragment extends PreferenceFragmentCompat {
         serviceIntent.putExtra("inputExtra", input);
         ContextCompat.startForegroundService(this.requireActivity(), serviceIntent);
     }
+
+    private void stopService() {
+        Intent serviceIntent = new Intent(getActivity(), PanicService.class);
+        getActivity().stopService(serviceIntent);
+    }
+
 }
