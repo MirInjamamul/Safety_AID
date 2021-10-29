@@ -42,7 +42,7 @@ public class HomeFragment extends PreferenceFragmentCompat {
     }
 
     private void startService() {
-        String input = "Hello From Detect App";
+        String input = "Women Safety AID";
         Intent serviceIntent = new Intent(this.requireActivity(), PanicService.class);
         serviceIntent.putExtra("inputExtra", input);
         ContextCompat.startForegroundService(this.requireActivity(), serviceIntent);
