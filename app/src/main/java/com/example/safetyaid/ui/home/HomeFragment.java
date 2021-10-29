@@ -1,25 +1,17 @@
 package com.example.safetyaid.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
+import androidx.core.content.ContextCompat;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.safetyaid.R;
-import com.example.safetyaid.databinding.FragmentHomeBinding;
+import com.example.safetyaid.service.PanicService;
 
 public class HomeFragment extends PreferenceFragmentCompat {
 
@@ -29,17 +21,29 @@ public class HomeFragment extends PreferenceFragmentCompat {
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
-        SwitchPreferenceCompat alarmSwitch = findPreference("sync");
+        SwitchPreferenceCompat panicSwitch = findPreference("panic");
 
-        if (alarmSwitch != null) {
-            alarmSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        if (panicSwitch != null) {
+            panicSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference arg0, Object isVibrateOnObject) {
-                    boolean isVibrateOn = (Boolean) isVibrateOnObject;
-                    Log.d(TAG, "onPreferenceChange: "+isVibrateOn);
+                    boolean panicSwitchActivation = (Boolean) isVibrateOnObject;
+                    if(panicSwitchActivation){
+                        Toast.makeText(getActivity(), "Panic Service is been Activated", Toast.LENGTH_LONG).show();
+                        startService();
+                    }else{
+
+                    }
                     return true;
                 }
             });
         }
+    }
+
+    private void startService() {
+        String input = "Hello From Detect App";
+        Intent serviceIntent = new Intent(this.requireActivity(), PanicService.class);
+        serviceIntent.putExtra("inputExtra", input);
+        ContextCompat.startForegroundService(this.requireActivity(), serviceIntent);
     }
 }
