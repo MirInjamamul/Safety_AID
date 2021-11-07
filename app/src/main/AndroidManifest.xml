@@ -3,10 +3,10 @@
     package="com.example.safetyaid">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
@@ -24,6 +24,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SafetyAid">
         <activity
+            android:name=".ContactPickerActivity"
+            android:exported="true" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name">
@@ -34,7 +37,9 @@
             </intent-filter>
         </activity>
 
-        <service android:enabled="true" android:name=".service.PanicService" />
+        <service
+            android:name=".service.PanicService"
+            android:enabled="true" />
     </application>
 
 </manifest>

@@ -76,5 +76,16 @@
             />
 
     </PreferenceCategory>
+    <PreferenceCategory app:title="Contacts">
+        <Preference
+            app:key="contact_preference"
+            app:title="Notify Numbers"
+            app:summary="Trigger THEIR Alarm" >
+        </Preference>
+        <Preference
+            app:key="about_preference"
+            app:title="About" >
+        </Preference>
+    </PreferenceCategory>
 
 </PreferenceScreen>

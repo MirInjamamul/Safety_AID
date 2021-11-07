@@ -10,6 +10,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
 
+import com.example.safetyaid.ContactPickerActivity;
 import com.example.safetyaid.R;
 import com.example.safetyaid.service.PanicService;
 
@@ -22,6 +23,7 @@ public class HomeFragment extends PreferenceFragmentCompat {
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
         SwitchPreferenceCompat panicSwitch = findPreference("panic");
+        Preference contact_perference = findPreference("contact_preference");
 
         if (panicSwitch != null) {
             panicSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -39,6 +41,15 @@ public class HomeFragment extends PreferenceFragmentCompat {
                 }
             });
         }
+
+        contact_perference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent intent = new Intent(getActivity(), ContactPickerActivity.class);
+                startActivity(intent);
+                return true;
+            }
+        });
     }
 
     private void startService() {
