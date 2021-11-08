@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -56,13 +57,26 @@ public class PanicService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 0, notificationIntent, 0);
 
-        notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Companion")
-                .setContentText(input)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentIntent(pendingIntent)
-                .build();
-        startForeground(1, notification);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setContentTitle("Companion")
+                    .setContentText(input)
+                    .setSmallIcon(R.drawable.ic_launcher_foreground)
+                    .setContentIntent(pendingIntent)
+                    .build();
+            startForeground(1, notification);
+        }else{
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                    .setContentTitle("Women Safety AID")
+                    .setContentText(input)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setAutoCancel(true);
+
+            Notification lower_api_notification = builder.build();
+            startForeground(1,lower_api_notification);
+        }
+
+
         //do heavy work on a background thread
         //stopSelf();
         return START_NOT_STICKY;

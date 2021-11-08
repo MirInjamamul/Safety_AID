@@ -1,6 +1,7 @@
 package com.example.safetyaid.ui.home;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -56,7 +57,11 @@ public class HomeFragment extends PreferenceFragmentCompat {
         String input = "Women Safety AID";
         Intent serviceIntent = new Intent(this.requireActivity(), PanicService.class);
         serviceIntent.putExtra("inputExtra", input);
-        ContextCompat.startForegroundService(this.requireActivity(), serviceIntent);
+
+        if(Build.VERSION.SDK_INT >= 26)
+            ContextCompat.startForegroundService(this.requireActivity(), serviceIntent);
+        else
+            getContext().startService(serviceIntent);
     }
 
     private void stopService() {
