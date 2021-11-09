@@ -59,7 +59,7 @@ public class PanicService extends Service {
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setContentTitle("Companion")
+                    .setContentTitle("Women Safety AID")
                     .setContentText(input)
                     .setSmallIcon(R.drawable.ic_launcher_foreground)
                     .setContentIntent(pendingIntent)

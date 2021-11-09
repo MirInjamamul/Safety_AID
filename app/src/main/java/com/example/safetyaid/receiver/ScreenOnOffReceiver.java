@@ -4,13 +4,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
 
 public class ScreenOnOffReceiver extends BroadcastReceiver {
-    static int countPowerOff = 0;    
+    static int countPowerOff = 0;
+    private Vibrator vibrator ;
     private static final String TAG = "ScreenOnOffReceiver";
 
     Handler handler = new Handler();
@@ -24,6 +26,7 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
+        vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
         try {
             System.out.println("Receiver start");
@@ -60,7 +63,7 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
         }
 
         if (countPowerOff == 3) {
-
+            vibrator.vibrate(1000);
             Log.d(TAG, "onReceive: USER is in Danger");
             countPowerOff = 0;
 
