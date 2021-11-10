@@ -135,7 +135,7 @@ public class ContactPickerActivity extends AppCompatActivity {
             Contact c = list.get(i);
             newValues.add(c.number + ";" + c.name + ";" + c.groupID);
         }
-        prefs.edit().putStringSet(getString(R.string.var_numbers_trigger), newValues).putStringSet(getString(R.string.var_numbers_notify), newValues).apply();
+        prefs.edit().putStringSet(getString(R.string.var_numbers_notify), newValues).putStringSet(getString(R.string.var_numbers_notify), newValues).apply();
         return true;
     }
 

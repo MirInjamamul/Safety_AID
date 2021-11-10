@@ -80,7 +80,7 @@
         <Preference
             app:key="contact_preference"
             app:title="Notify Numbers"
-            app:summary="Trigger THEIR Alarm" >
+            app:summary="Notify THEIR Alarm" >
         </Preference>
         <Preference
             app:key="about_preference"
