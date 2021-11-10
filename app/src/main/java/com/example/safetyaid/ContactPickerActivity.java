@@ -21,9 +21,11 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.safetyaid.Model.Contact;
 import com.example.safetyaid.adapter.ContactAdapter;
+import com.example.safetyaid.data.DBHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -38,6 +40,7 @@ public class ContactPickerActivity extends AppCompatActivity {
     private String mode;
 
     private List<Contact> list;
+    private DBHelper mydb ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +51,8 @@ public class ContactPickerActivity extends AppCompatActivity {
 
         prefs = getSharedPreferences("conf", MODE_PRIVATE);
         mode = getIntent().getDataString();
+        mydb = new DBHelper(this);
+        ArrayList arrayList= mydb.getAllCotacts();
 
         list = new ArrayList<>();
         rv = findViewById(R.id.contactList);
@@ -79,6 +84,11 @@ public class ContactPickerActivity extends AppCompatActivity {
                                         ((TextView)content.findViewById(R.id.contact_number)).getText().toString(),
                                         ((String)((Spinner)content.findViewById(R.id.group_select)).getSelectedItem()));
                                 list.add(c);
+
+//                                TODO insert db data from here
+                                boolean data_inserted = mydb.insertContact(c.name, c.number, c.groupID);
+                                if(data_inserted)
+                                    Toast.makeText(getApplicationContext(),"Name: "+c.name+" is instered in DB",Toast.LENGTH_LONG).show();
                                 rv.getAdapter().notifyItemInserted(list.indexOf(c));
                             }
                         })

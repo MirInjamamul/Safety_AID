@@ -13,6 +13,7 @@ import androidx.preference.SwitchPreferenceCompat;
 
 import com.example.safetyaid.ContactPickerActivity;
 import com.example.safetyaid.R;
+import com.example.safetyaid.data.DBHelper;
 import com.example.safetyaid.service.PanicService;
 
 public class HomeFragment extends PreferenceFragmentCompat {
@@ -22,6 +23,7 @@ public class HomeFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
+
 
         SwitchPreferenceCompat panicSwitch = findPreference("panic");
         Preference contact_perference = findPreference("contact_preference");
