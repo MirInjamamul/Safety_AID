@@ -86,9 +86,8 @@ public class ContactPickerActivity extends AppCompatActivity {
                                 list.add(c);
 
 //                                TODO insert db data from here
-                                boolean data_inserted = mydb.insertContact(c.name, c.number, c.groupID);
-                                if(data_inserted)
-                                    Toast.makeText(getApplicationContext(),"Name: "+c.name+" is instered in DB",Toast.LENGTH_LONG).show();
+                                mydb.insertContact(c.name, c.number, c.groupID);
+
                                 rv.getAdapter().notifyItemInserted(list.indexOf(c));
                             }
                         })

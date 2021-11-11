@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi;
 
 import com.example.safetyaid.Model.Contact;
 import com.example.safetyaid.R;
+import com.example.safetyaid.data.DBHelper;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.Set;
 
 public class Utils {
+
+    DBHelper db ;
 
     //contact related stuff
     public static String[] getContactGroups(Context c)

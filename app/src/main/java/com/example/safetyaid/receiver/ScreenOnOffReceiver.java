@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.telephony.SmsManager;
@@ -18,11 +19,15 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 
 import com.example.safetyaid.Model.Contact;
 import com.example.safetyaid.R;
 import com.example.safetyaid.Utils.Utils;
+import com.example.safetyaid.data.DBHelper;
+
+import java.util.ArrayList;
 
 
 public class ScreenOnOffReceiver extends BroadcastReceiver {
@@ -31,6 +36,8 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
     private static final String TAG = "ScreenOnOffReceiver";
     Context context;
     private Contact[] notifyContacts;
+    private ArrayList contact_list_number = new ArrayList<String>();
+    private DBHelper myDB;
 
     Handler handler = new Handler();
     Runnable runnable = new Runnable() {
@@ -44,6 +51,7 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         this.context = context;
+        myDB = new DBHelper(context);
         vibrator = (Vibrator) this.context.getSystemService(Context.VIBRATOR_SERVICE);
 
         try {
@@ -85,6 +93,8 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
             Log.d(TAG, "onReceive: USER is in Danger");
             countPowerOff = 0;
 
+            get_emergency_number();
+
             notifyContacts = Utils.getContactsByGroup("General", context);
             getCurrentLocationAndPanic();
 
@@ -94,9 +104,14 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
 
     }
 
+    private void get_emergency_number() {
+        contact_list_number = myDB.getAllCotactsNumber();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void sendOutPanic(Location loc)
     {
-        String keyword = "Panic";
+        String keyword = "Help";
         SmsManager manager = SmsManager.getDefault();
 
         Toast.makeText(context.getApplicationContext(),"Number found : "+notifyContacts.length,Toast.LENGTH_SHORT).show();
@@ -110,6 +125,18 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
             manager.sendTextMessage(c.number, null, sb.toString(), null, null);
             Log.d(TAG, "sendOutPanic: Message Sent Successfully");
         }
+
+        contact_list_number.forEach((number) -> {
+            StringBuilder sb = new StringBuilder(keyword);
+            if(loc != null)
+                sb.append("\n" + loc.getLatitude() + "\n" + loc.getLongitude());
+
+            manager.sendTextMessage(number.toString(), null, sb.toString(), null, null);
+            Log.d(TAG, "sendOutPanic: Message Sent Successfully");
+
+
+            System.out.print(number + " ");
+        });
     }
 
     private void getCurrentLocationAndPanic()

@@ -1,10 +1,13 @@
 package com.example.safetyaid;
 
+import android.os.Build;
 import android.os.Bundle;
 
+import com.example.safetyaid.Utils.Utils;
 import com.example.safetyaid.data.DBHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -17,12 +20,17 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        String[] perms;
+        if((perms = Utils.checkPermissions(this)).length > 0)
+            requestPermissions(perms, 255);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
