@@ -69,6 +69,7 @@ public class Utils {
         permissions.add(Manifest.permission.SEND_SMS);
         permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
         permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        permissions.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
         permissions.add(Manifest.permission.CALL_PHONE);
         permissions.add(Manifest.permission.INTERNET);
         permissions.add(Manifest.permission.ACCESS_NETWORK_STATE);

@@ -2,15 +2,19 @@ package com.example.safetyaid.receiver;
 
 import static android.content.Context.LOCATION_SERVICE;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -19,25 +23,33 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 
 import com.example.safetyaid.Model.Contact;
 import com.example.safetyaid.R;
 import com.example.safetyaid.Utils.Utils;
 import com.example.safetyaid.data.DBHelper;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 
 
 public class ScreenOnOffReceiver extends BroadcastReceiver {
     static int countPowerOff = 0;
-    private Vibrator vibrator ;
+    private Vibrator vibrator;
     private static final String TAG = "ScreenOnOffReceiver";
     Context context;
     private Contact[] notifyContacts;
     private ArrayList contact_list_number = new ArrayList<String>();
     private DBHelper myDB;
+    FusedLocationProviderClient fusedLocationProviderClient;
 
     Handler handler = new Handler();
     Runnable runnable = new Runnable() {
@@ -54,35 +66,36 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
         myDB = new DBHelper(context);
         vibrator = (Vibrator) this.context.getSystemService(Context.VIBRATOR_SERVICE);
 
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+
         try {
             System.out.println("Receiver start");
             String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
             String incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER);
 
-            Log.d(TAG, "onReceive: "+incomingNumber);
+            Log.d(TAG, "onReceive: " + incomingNumber);
 
-            if(state.equals(TelephonyManager.EXTRA_STATE_RINGING)){
-                Toast.makeText(context,"Incoming Call State",Toast.LENGTH_SHORT).show();
-                Toast.makeText(context,"Ringing State Number is -"+incomingNumber,Toast.LENGTH_SHORT).show();
+            if (state.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
+                Toast.makeText(context, "Incoming Call State", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Ringing State Number is -" + incomingNumber, Toast.LENGTH_SHORT).show();
 
 
             }
-            if ((state.equals(TelephonyManager.EXTRA_STATE_OFFHOOK))){
-                Toast.makeText(context,"Call Received State",Toast.LENGTH_SHORT).show();
+            if ((state.equals(TelephonyManager.EXTRA_STATE_OFFHOOK))) {
+                Toast.makeText(context, "Call Received State", Toast.LENGTH_SHORT).show();
             }
-            if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)){
-                Toast.makeText(context,"Call Idle State",Toast.LENGTH_SHORT).show();
+            if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
+                Toast.makeText(context, "Call Idle State", Toast.LENGTH_SHORT).show();
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        if(Intent.ACTION_SCREEN_OFF.equals(action)){
+        if (Intent.ACTION_SCREEN_OFF.equals(action)) {
             countPowerOff++;
             Log.d("Current clicks are ", String.valueOf(countPowerOff));
             Log.d(TAG, "onReceive: Screen is turning off");
-        }else if(Intent.ACTION_SCREEN_ON.equals(action)){
+        } else if (Intent.ACTION_SCREEN_ON.equals(action)) {
             countPowerOff++;
             Log.d("Current clicks are ", String.valueOf(countPowerOff));
             Log.d(TAG, "onReceive: Screen is turning on");
@@ -96,11 +109,12 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
             get_emergency_number();
 
             notifyContacts = Utils.getContactsByGroup("General", context);
+
             getCurrentLocationAndPanic();
 
             handler.removeCallbacks(runnable);
         }
-        handler.postDelayed(runnable, (long) (2000*1.5));
+        handler.postDelayed(runnable, (long) (2000 * 1.5));
 
     }
 
@@ -108,56 +122,101 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
         contact_list_number = myDB.getAllCotactsNumber();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void sendOutPanic(Location loc)
-    {
+    private void sendOutPanic(Location loc) {
         String keyword = "Help";
         SmsManager manager = SmsManager.getDefault();
 
-        Toast.makeText(context.getApplicationContext(),"Number found : "+notifyContacts.length,Toast.LENGTH_SHORT).show();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            contact_list_number.forEach((number) -> {
+                StringBuilder sb = new StringBuilder(keyword);
+                if (loc != null)
+                    sb.append("\n" + loc.getLatitude() + "\n" + loc.getLongitude());
 
-        for (Contact c : notifyContacts)
-        {
-            StringBuilder sb = new StringBuilder(keyword);
-            if(loc != null)
-                sb.append("\n" + loc.getLatitude() + "\n" + loc.getLongitude());
+                manager.sendTextMessage(number.toString(), null, sb.toString(), null, null);
+                Log.d(TAG, "sendOutPanic: Message Sent Successfully");
 
-            manager.sendTextMessage(c.number, null, sb.toString(), null, null);
-            Log.d(TAG, "sendOutPanic: Message Sent Successfully");
+
+                System.out.print(number + " ");
+            });
         }
-
-        contact_list_number.forEach((number) -> {
-            StringBuilder sb = new StringBuilder(keyword);
-            if(loc != null)
-                sb.append("\n" + loc.getLatitude() + "\n" + loc.getLongitude());
-
-            manager.sendTextMessage(number.toString(), null, sb.toString(), null, null);
-            Log.d(TAG, "sendOutPanic: Message Sent Successfully");
-
-
-            System.out.print(number + " ");
-        });
     }
 
-    private void getCurrentLocationAndPanic()
-    {
-
+    private void getCurrentLocationAndPanic() {
         Log.d(TAG, "getCurrentLocationAndPanic initiated");
-        sendOutPanic(null);
-//        LocationManager locManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-//        try
-//        {
-//            if(locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
-//                locManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, this, null);
-//            else if(locManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
-//                locManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, this, null);
-//            else
-//                sendOutPanic(locManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER));
-//        }
-//        catch (Exception e)
-//        {
-//            Toast.makeText(this, "GPS fix could not be acquired. Please check your settings!", Toast.LENGTH_LONG).show();
-//            sendOutPanic(null);
-//        }
+
+        if (isLocationEnabled()) {
+
+            // getting last location from FusedLocationClient object
+            if (ActivityCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            fusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+
+                @Override
+                public void onComplete(@NonNull Task<Location> task) {
+                    Location location = task.getResult();
+                    if (location == null) {
+                        requestNewLocationData();
+                    } else {
+                        sendOutPanic(location);
+
+                    }
+                }
+            });
+        } else {
+            Toast.makeText(context, "Please turn on" + " your location...", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            context.startService(intent);
+        }
     }
+
+    // method to check
+    // if location is enabled
+    private boolean isLocationEnabled() {
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+    private void requestNewLocationData() {
+
+        // Initializing LocationRequest
+        // object with appropriate methods
+        LocationRequest mLocationRequest = new LocationRequest();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(5);
+        mLocationRequest.setFastestInterval(0);
+        mLocationRequest.setNumUpdates(1);
+
+        // setting LocationRequest
+        // on FusedLocationClient
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+        if (ActivityCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        fusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+    }
+
+    private LocationCallback mLocationCallback = new LocationCallback() {
+
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            Location mLastLocation = locationResult.getLastLocation();
+
+            sendOutPanic(mLastLocation);
+        }
+    };
 }
