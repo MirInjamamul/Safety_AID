@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -47,7 +48,9 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
     private static final String TAG = "ScreenOnOffReceiver";
     Context context;
     private Contact[] notifyContacts;
+
     private ArrayList contact_list_number = new ArrayList<String>();
+    private int battery_level;
     private DBHelper myDB;
     FusedLocationProviderClient fusedLocationProviderClient;
 
@@ -110,12 +113,26 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
 
             notifyContacts = Utils.getContactsByGroup("General", context);
 
+            getBatteryLevel();
+
             getCurrentLocationAndPanic();
 
             handler.removeCallbacks(runnable);
         }
         handler.postDelayed(runnable, (long) (2000 * 1.5));
 
+    }
+
+    private void getBatteryLevel() {
+        BatteryManager bm = (BatteryManager)this.context.getSystemService(Context.BATTERY_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            battery_level = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+
+        }else{
+            battery_level = 0;
+        }
+
+        Log.d(TAG, "getBatteryLevel: "+battery_level);
     }
 
     private void get_emergency_number() {
@@ -129,6 +146,9 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             contact_list_number.forEach((number) -> {
                 StringBuilder sb = new StringBuilder(keyword);
+                // Add Battery Level in SMS
+                sb.append("\n" + "Battery Level : " +battery_level);
+
                 if (loc != null)
                     sb.append("\n" + loc.getLatitude() + "\n" + loc.getLongitude());
 
