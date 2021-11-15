@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,8 +29,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         String[] perms;
-        if((perms = Utils.checkPermissions(this)).length > 0)
-            requestPermissions(perms, 255);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if((perms = Utils.checkPermissions(this)).length > 0)
+                requestPermissions(perms, 255);
+        }
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
