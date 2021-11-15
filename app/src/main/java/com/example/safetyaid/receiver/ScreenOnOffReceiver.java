@@ -112,6 +112,7 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
             get_IMEI_number();
             getCurrentLocationAndPanic();
 
+
             handler.removeCallbacks(runnable);
         }
         handler.postDelayed(runnable, (long) (2000 * 1.5));
@@ -156,24 +157,40 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
         String keyword = "Help";
         SmsManager manager = SmsManager.getDefault();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            contact_list_number.forEach((number) -> {
-                StringBuilder sb = new StringBuilder(keyword);
-                // Add Battery Level in SMS
-                sb.append("\n" + "Battery Level : " +battery_level);
+        for (int counter = 0; counter < contact_list_number.size(); counter++) {
+            String phone_number = (String) contact_list_number.get(counter);
+
+            StringBuilder sb = new StringBuilder(keyword);
+            // Add Battery Level in SMS
+            sb.append("\n" + "Battery Level : " +battery_level);
 //                Add IEMI Number in SMS
-                sb.append("\n" + "IMEI : " +imei_number);
+            sb.append("\n" + "IMEI : " +imei_number);
 
-                if (loc != null)
-                    sb.append("\n" + "Latitude"+ loc.getLatitude() + "\n" + "Longitude : "+ loc.getLongitude());
+            if (loc != null)
+                sb.append("\n" + "Latitude"+ loc.getLatitude() + "\n" + "Longitude : "+ loc.getLongitude());
 
-                manager.sendTextMessage(number.toString(), null, sb.toString(), null, null);
-                Log.d(TAG, "sendOutPanic: Message Sent Successfully");
+            manager.sendTextMessage(phone_number, null, sb.toString(), null, null);
+            Log.d(TAG, "sendOutPanic: Message Sent Successfully");
 
-
-                System.out.print(number + " ");
-            });
         }
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//            contact_list_number.forEach((number) -> {
+//                StringBuilder sb = new StringBuilder(keyword);
+//                // Add Battery Level in SMS
+//                sb.append("\n" + "Battery Level : " +battery_level);
+////                Add IEMI Number in SMS
+//                sb.append("\n" + "IMEI : " +imei_number);
+//
+//                if (loc != null)
+//                    sb.append("\n" + "Latitude"+ loc.getLatitude() + "\n" + "Longitude : "+ loc.getLongitude());
+//
+//                manager.sendTextMessage(number.toString(), null, sb.toString(), null, null);
+//                Log.d(TAG, "sendOutPanic: Message Sent Successfully");
+//
+//                System.out.print(number + " ");
+//            });
+//        }
     }
 
     private void getCurrentLocationAndPanic() {
