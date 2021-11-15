@@ -39,12 +39,14 @@ import java.util.ArrayList;
 public class ScreenOnOffReceiver extends BroadcastReceiver {
     static int countPowerOff = 0;
     private Vibrator vibrator;
+    TelephonyManager telephonyManager;
     private static final String TAG = "ScreenOnOffReceiver";
     Context context;
     private Contact[] notifyContacts;
 
     private ArrayList contact_list_number = new ArrayList<String>();
     private int battery_level;
+    private String imei_number;
     private DBHelper myDB;
     FusedLocationProviderClient fusedLocationProviderClient;
 
@@ -62,6 +64,7 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
         this.context = context;
         myDB = new DBHelper(context);
         vibrator = (Vibrator) this.context.getSystemService(Context.VIBRATOR_SERVICE);
+        telephonyManager = (TelephonyManager)this.context.getSystemService(Context.TELEPHONY_SERVICE);
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
 
@@ -105,14 +108,32 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
 
             get_emergency_number();
             notifyContacts = Utils.getContactsByGroup("General", context);
-
             getBatteryLevel();
+            get_IMEI_number();
             getCurrentLocationAndPanic();
 
             handler.removeCallbacks(runnable);
         }
         handler.postDelayed(runnable, (long) (2000 * 1.5));
 
+    }
+
+    private void get_IMEI_number() {
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            imei_number = Settings.Secure.getString(
+                    context.getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
+        } else {
+            telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            if (telephonyManager.getDeviceId() != null) {
+                imei_number = telephonyManager.getDeviceId();
+            } else {
+                imei_number = Settings.Secure.getString(
+                        context.getContentResolver(),
+                        Settings.Secure.ANDROID_ID);
+            }
+        }
     }
 
     private void getBatteryLevel() {
@@ -140,9 +161,11 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
                 StringBuilder sb = new StringBuilder(keyword);
                 // Add Battery Level in SMS
                 sb.append("\n" + "Battery Level : " +battery_level);
+//                Add IEMI Number in SMS
+                sb.append("\n" + "IMEI : " +imei_number);
 
                 if (loc != null)
-                    sb.append("\n" + loc.getLatitude() + "\n" + loc.getLongitude());
+                    sb.append("\n" + "Latitude"+ loc.getLatitude() + "\n" + "Longitude : "+ loc.getLongitude());
 
                 manager.sendTextMessage(number.toString(), null, sb.toString(), null, null);
                 Log.d(TAG, "sendOutPanic: Message Sent Successfully");
