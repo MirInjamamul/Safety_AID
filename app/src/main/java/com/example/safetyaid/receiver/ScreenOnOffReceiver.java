@@ -1,7 +1,5 @@
 package com.example.safetyaid.receiver;
 
-import static android.content.Context.LOCATION_SERVICE;
-
 import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -19,16 +17,12 @@ import android.provider.Settings;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
 import com.example.safetyaid.Model.Contact;
-import com.example.safetyaid.R;
 import com.example.safetyaid.Utils.Utils;
 import com.example.safetyaid.data.DBHelper;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -41,7 +35,7 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 
-
+@SuppressWarnings("unchecked")
 public class ScreenOnOffReceiver extends BroadcastReceiver {
     static int countPowerOff = 0;
     private Vibrator vibrator;
@@ -110,11 +104,9 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
             countPowerOff = 0;
 
             get_emergency_number();
-
             notifyContacts = Utils.getContactsByGroup("General", context);
 
             getBatteryLevel();
-
             getCurrentLocationAndPanic();
 
             handler.removeCallbacks(runnable);
