@@ -167,7 +167,7 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
             sb.append("\n" + "IMEI : " +imei_number);
 
             if (loc != null)
-                sb.append("\n" + "Latitude"+ loc.getLatitude() + "\n" + "Longitude : "+ loc.getLongitude());
+                sb.append("\n" + "Map: http://www.google.com/maps/?q="+ loc.getLatitude() + "," + loc.getLongitude());
 
             manager.sendTextMessage(phone_number, null, sb.toString(), null, null);
             Log.d(TAG, "sendOutPanic: Message Sent Successfully");
