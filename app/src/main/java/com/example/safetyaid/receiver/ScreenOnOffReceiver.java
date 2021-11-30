@@ -8,8 +8,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Vibrator;
@@ -31,12 +34,26 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @SuppressWarnings("unchecked")
 public class ScreenOnOffReceiver extends BroadcastReceiver {
+    //Firebase instances for storage and Storage References
+    FirebaseStorage firebaseStorage;
+    StorageReference storageReference;
+
     static int countPowerOff = 0;
     private Vibrator vibrator;
     TelephonyManager telephonyManager;
@@ -49,8 +66,13 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
     private String imei_number;
     private DBHelper myDB;
     FusedLocationProviderClient fusedLocationProviderClient;
+    MediaRecorder mediaRecorder ;
+    Random random ;
+    String RandomAudioFileName = "ABCDEFGHIJKLMNOP";
+    String AudioSavePathInDevice = null;
 
     Handler handler = new Handler();
+    Handler recording_handler = new Handler();
     Runnable runnable = new Runnable() {
         public void run() {
             countPowerOff = 0;
@@ -65,6 +87,11 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
         myDB = new DBHelper(context);
         vibrator = (Vibrator) this.context.getSystemService(Context.VIBRATOR_SERVICE);
         telephonyManager = (TelephonyManager)this.context.getSystemService(Context.TELEPHONY_SERVICE);
+        random = new Random();
+
+//        Get the Firebase Storage References
+        firebaseStorage = FirebaseStorage.getInstance();
+        storageReference = firebaseStorage.getReference();
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
 
@@ -102,15 +129,16 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
         }
 
         if (countPowerOff == 3) {
-            vibrator.vibrate(1000);
-            Log.d(TAG, "onReceive: USER is in Danger");
             countPowerOff = 0;
-
+            Log.d(TAG, "onReceive: USER is in Danger");
+            vibrator.vibrate(1000);
             get_emergency_number();
             notifyContacts = Utils.getContactsByGroup("General", context);
             getBatteryLevel();
             get_IMEI_number();
             getCurrentLocationAndPanic();
+
+            recordAudio();
 
 
             handler.removeCallbacks(runnable);
@@ -118,6 +146,84 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
         handler.postDelayed(runnable, (long) (2000 * 1.5));
 
     }
+
+    public void recordAudio() {
+
+        new Timer().schedule(new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                recording_handler.post(new Runnable()
+                {
+
+                    @Override
+                    public void run()
+                    {
+                        mediaRecorder.stop();
+                        Log.d(TAG, "Recording Complete");
+
+                        Uri file = Uri.fromFile(new File(AudioSavePathInDevice));
+                        StorageReference audioReferences = storageReference.child("audio/"+file.getLastPathSegment());
+                        UploadTask uploadTask = audioReferences.putFile(file);
+
+                        //Register Observer
+                        uploadTask.addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, "onFailure: ");
+                            }
+                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                Log.d(TAG, "onSuccess: ");
+                            }
+                        });
+
+                    }
+                });
+
+            }
+        }, 10000);
+
+        AudioSavePathInDevice =
+                Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +
+                        CreateRandomAudioFileName(5) + "AudioRecording.3gp";
+
+        MediaRecorderReady();
+
+        try {
+            mediaRecorder.prepare();
+            mediaRecorder.start();
+        } catch (IllegalStateException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void MediaRecorderReady(){
+        mediaRecorder=new MediaRecorder();
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
+        mediaRecorder.setOutputFile(AudioSavePathInDevice);
+    }
+
+    public String CreateRandomAudioFileName(int string){
+        StringBuilder stringBuilder = new StringBuilder( string );
+        int i = 0 ;
+        while(i < string ) {
+            stringBuilder.append(RandomAudioFileName.
+                    charAt(random.nextInt(RandomAudioFileName.length())));
+
+            i++ ;
+        }
+        return stringBuilder.toString();
+    }
+
 
     private void get_IMEI_number() {
 

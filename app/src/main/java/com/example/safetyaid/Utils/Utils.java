@@ -65,14 +65,16 @@ public class Utils {
     public static String[] checkPermissions(Context c)
     {
         List<String> permissions = new ArrayList<>();
-        permissions.add(Manifest.permission.RECEIVE_SMS);
-        permissions.add(Manifest.permission.SEND_SMS);
+        permissions.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
         permissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
         permissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
-        permissions.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+        permissions.add(Manifest.permission.ACCESS_NETWORK_STATE);
         permissions.add(Manifest.permission.CALL_PHONE);
         permissions.add(Manifest.permission.INTERNET);
-        permissions.add(Manifest.permission.ACCESS_NETWORK_STATE);
+        permissions.add(Manifest.permission.RECEIVE_SMS);
+        permissions.add(Manifest.permission.RECORD_AUDIO);
+        permissions.add(Manifest.permission.SEND_SMS);
+        permissions.add(Manifest.permission.VIBRATE);
         permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
         List<String> permissionsToRequest = new ArrayList<>();
