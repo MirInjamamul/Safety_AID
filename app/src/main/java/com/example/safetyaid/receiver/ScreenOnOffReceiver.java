@@ -135,7 +135,13 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
             get_emergency_number();
             notifyContacts = Utils.getContactsByGroup("General", context);
             getBatteryLevel();
-            get_IMEI_number();
+            try{
+                get_IMEI_number();
+            }catch (Exception e){
+                imei_number = "";
+                e.printStackTrace();
+            }
+
             getCurrentLocationAndPanic();
 
             recordAudio();
