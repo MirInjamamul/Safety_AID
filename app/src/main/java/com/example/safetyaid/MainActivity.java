@@ -1,9 +1,12 @@
 package com.example.safetyaid;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 
 import com.example.safetyaid.Utils.Utils;
+import com.example.safetyaid.auth.LoginActivity;
 import com.example.safetyaid.data.DBHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -27,6 +30,18 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // Retrieving the value using its keys the file name
+        // must be same in both saving and retrieving the data
+        SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_APPEND);
+
+        // The value will be default as empty string because for
+        // the very first time when the app is opened, there is nothing to show
+        String s1 = sh.getString("name", "");
+
+        if (s1.equals(""))
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+
 
         String[] perms;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

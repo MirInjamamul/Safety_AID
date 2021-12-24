@@ -29,7 +29,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SafetyAid">
-
+        <activity
+            android:name=".auth.LoginActivity"
+            android:exported="true" />
         <activity
             android:name=".ContactPickerActivity"
             android:exported="true" />
