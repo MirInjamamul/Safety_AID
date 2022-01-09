@@ -30,6 +30,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SafetyAid">
         <activity
+            android:name=".auth.RegisterActivity"
+            android:exported="true" />
+        <activity
             android:name=".auth.LoginActivity"
             android:exported="true" />
         <activity

@@ -37,11 +37,12 @@ public class MainActivity extends AppCompatActivity {
 
         // The value will be default as empty string because for
         // the very first time when the app is opened, there is nothing to show
-        String s1 = sh.getString("name", "");
+        boolean s1 = sh.getBoolean("logged", false);
 
-        if (s1.equals(""))
+        if (s1 == false) {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
-
+            return;
+        }
 
         String[] perms;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

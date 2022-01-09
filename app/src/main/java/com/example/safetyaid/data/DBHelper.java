@@ -14,10 +14,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "Safety.db";
     public static final String CONTACTS_TABLE_NAME = "contacts";
-    public static final String CONTACTS_COLUMN_ID = "id";
     public static final String CONTACTS_COLUMN_NAME = "name";
     public static final String CONTACTS_COLUMN_PHONE = "phone";
-    public static final String CONTACTS_COLUMN_CATEGORY = "category";
     private HashMap hp;
 
     public DBHelper(Context context){
@@ -30,11 +28,16 @@ public class DBHelper extends SQLiteOpenHelper {
                 "create table contacts " +
                         "(id integer primary key, name text,phone text,category text)"
         );
+        sqLiteDatabase.execSQL(
+                "create table auth " +
+                        "(id integer primary key, name text,email text,phone text,password text)"
+        );
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS contacts");
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS auth");
         onCreate(sqLiteDatabase);
     }
 
@@ -45,6 +48,17 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put("phone", phone);
         contentValues.put("category", category);
         db.insert("contacts", null, contentValues);
+        return true;
+    }
+
+    public boolean insertSignUp (String name, String email, String phone, String password) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("name", name);
+        contentValues.put("email", email);
+        contentValues.put("phone", phone);
+        contentValues.put("password", password);
+        db.insert("auth", null, contentValues);
         return true;
     }
 
@@ -102,6 +116,27 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res =  db.rawQuery( "select * from contacts where id="+id+"", null );
         return res;
+    }
+
+    public boolean getAuthData(String email , String password) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from auth", null );
+
+        String db_email = "asdrew";
+        String db_password = "asdasdas";
+
+        res.moveToFirst();
+
+        while(res.isAfterLast() == false){
+            db_email = res.getString(res.getColumnIndex("email"));
+            db_password = res.getString(res.getColumnIndex("password"));
+            break;
+        }
+
+        if(db_email.equals(email) && db_password.equals(password))
+            return true;
+        else
+            return false;
     }
 
     public int numberOfRows(){
