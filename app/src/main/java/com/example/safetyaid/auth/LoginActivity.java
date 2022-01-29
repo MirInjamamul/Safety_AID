@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     TextInputLayout emailError, passError;
     private  DBHelper mydb;
 
-    SharedPreferences sh;
+//    SharedPreferences sh;
 
     // The value will be default as empty string because for
     // the very first time when the app is opened, there is nothing to show
@@ -48,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
 
         mydb = new DBHelper(this);
 
-        sh = getSharedPreferences("MySharedPref", MODE_APPEND);
+//        sh = getSharedPreferences("MySharedPref", MODE_APPEND);
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,14 +101,20 @@ public class LoginActivity extends AppCompatActivity {
             if (getAuth) {
                 Log.d(TAG,"Email and Password Correct");
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                SharedPreferences.Editor editor = sh.edit();
-                editor.putBoolean("logged",true);
-                editor.commit();
+//                SharedPreferences.Editor editor = sh.edit();
+//                editor.putBoolean("logged",true);
+//                editor.commit();
+                Boolean x = mydb.insertStatus(true);
+                System.out.println("My DB True");
+                if(x) System.out.println(mydb.getStatus());
             }else {
                 Toast.makeText(getApplicationContext(), "Wrong Username or Password", Toast.LENGTH_SHORT).show();
-                SharedPreferences.Editor editor = sh.edit();
-                editor.putBoolean("logged",false);
-                editor.commit();
+//                SharedPreferences.Editor editor = sh.edit();
+//                editor.putBoolean("logged",false);
+//                editor.commit();
+                Boolean x = mydb.insertStatus(false);
+                System.out.println("My DB false");
+                if(x) System.out.println(mydb.getStatus());
             }
             }
 

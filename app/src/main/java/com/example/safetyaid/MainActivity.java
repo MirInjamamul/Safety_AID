@@ -22,7 +22,7 @@ import com.example.safetyaid.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
-
+    private DBHelper myDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,11 +33,13 @@ public class MainActivity extends AppCompatActivity {
 
         // Retrieving the value using its keys the file name
         // must be same in both saving and retrieving the data
-        SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_APPEND);
+//        SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_APPEND);
 
         // The value will be default as empty string because for
         // the very first time when the app is opened, there is nothing to show
-        boolean s1 = sh.getBoolean("logged", false);
+//        boolean s1 = sh.getBoolean("logged", false);
+        myDb = new DBHelper(this);
+        boolean s1 = myDb.getStatus();;
 
         if (s1 == false) {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));

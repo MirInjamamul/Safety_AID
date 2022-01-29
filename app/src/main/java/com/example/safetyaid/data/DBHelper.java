@@ -32,12 +32,18 @@ public class DBHelper extends SQLiteOpenHelper {
                 "create table auth " +
                         "(id integer primary key, name text,email text,phone text,password text)"
         );
+
+        sqLiteDatabase.execSQL(
+                "create table status " +
+                        "(id integer primary key, loggedInStatus boolean)"
+        );
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS contacts");
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS auth");
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS status");
         onCreate(sqLiteDatabase);
     }
 
@@ -60,6 +66,42 @@ public class DBHelper extends SQLiteOpenHelper {
         contentValues.put("password", password);
         db.insert("auth", null, contentValues);
         return true;
+    }
+
+    public boolean insertStatus(Boolean s) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("loggedInStatus", s);
+        Cursor res =  db.rawQuery( "select * from status", null );
+        System.out.println("Get Count insert "+ res.getCount());
+        if(res.getCount() == 0)
+        db.insert("status", null, contentValues);
+        else
+            db.update("status", contentValues, "id = ? ", new String[] { Integer.toString(1) } );
+        return true;
+    }
+
+    public Boolean getStatus() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from status", null );
+        res.moveToFirst();
+        Boolean status = false;
+        System.out.println("Get Count get "+ res.getCount());
+        if(res.getCount()< 1){
+            status = false;
+        }
+        else{
+            String val = res.getString(res.getColumnIndex("loggedInStatus"));
+            if(val.equals("1")){
+                System.out.println(true);
+                status = true;
+            }
+            else{
+                System.out.println(false);
+                status = false;
+            }
+        }
+        return status;
     }
 
     public boolean updateContact (Integer id, String name, String phone, String email, String street,String place, String category) {
