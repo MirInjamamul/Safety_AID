@@ -102,18 +102,18 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
 
             Log.d(TAG, "onReceive: " + incomingNumber);
 
-            if (state.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
-                Toast.makeText(context, "Incoming Call State", Toast.LENGTH_SHORT).show();
-                Toast.makeText(context, "Ringing State Number is -" + incomingNumber, Toast.LENGTH_SHORT).show();
-
-
-            }
-            if ((state.equals(TelephonyManager.EXTRA_STATE_OFFHOOK))) {
-                Toast.makeText(context, "Call Received State", Toast.LENGTH_SHORT).show();
-            }
-            if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
-                Toast.makeText(context, "Call Idle State", Toast.LENGTH_SHORT).show();
-            }
+//            if (state.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
+//                Toast.makeText(context, "Incoming Call State", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "Ringing State Number is -" + incomingNumber, Toast.LENGTH_SHORT).show();
+//
+//
+//            }
+//            if ((state.equals(TelephonyManager.EXTRA_STATE_OFFHOOK))) {
+//                Toast.makeText(context, "Call Received State", Toast.LENGTH_SHORT).show();
+//            }
+//            if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
+//                Toast.makeText(context, "Call Idle State", Toast.LENGTH_SHORT).show();
+//            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -278,12 +278,16 @@ public class ScreenOnOffReceiver extends BroadcastReceiver {
 //                Add IEMI Number in SMS
             sb.append("\n" + "IMEI : " +imei_number);
 
-            if (loc != null)
-                sb.append("\n" + "Map: http://www.google.com/maps/?q="+ loc.getLatitude() + "," + loc.getLongitude());
 
             manager.sendTextMessage(phone_number, null, sb.toString(), null, null);
-            Log.d(TAG, "sendOutPanic: Message Sent Successfully");
 
+            String map_loc;
+            if (loc != null) {
+                map_loc = "http://www.google.com/maps/?q=" + loc.getLatitude() + "," + loc.getLongitude();
+                manager.sendTextMessage(phone_number, null, map_loc.toString(), null, null);
+            }
+
+            Log.d(TAG, "sendOutPanic: Message Sent Successfully");
         }
 
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

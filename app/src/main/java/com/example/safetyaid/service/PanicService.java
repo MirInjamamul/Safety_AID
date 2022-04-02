@@ -44,7 +44,7 @@ public class PanicService extends Service {
         //Create a network change broadcast receive
         screenOnOffReceiver = new ScreenOnOffReceiver();
 
-        //register the broadcast reciever
+        //register the broadcast receiver
         registerReceiver(screenOnOffReceiver,intentFilter);
 
         Log.d(TAG, "onCreate: Screen on off is registered ");
